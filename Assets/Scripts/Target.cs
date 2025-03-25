@@ -5,6 +5,7 @@ using UnityEngine.WSA;
 
 public class Target : MonoBehaviour
 {
+    public ParticleSystem explosionParticle;
     public int pointValue;
     private GameManager gameManager;
     private Rigidbody targetRb;
@@ -12,7 +13,7 @@ public class Target : MonoBehaviour
     private float maxSpeed = 16;
     private float maxTorque = 10;
     private float xRange = 4;
-    private float ySpawmPos = -6;
+    private float ySpawmPos = -3;
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -39,11 +40,19 @@ public class Target : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        Destroy(gameObject);
-        gameManager.UpdateScore(pointValue);
+        if(gameManager.isGameActive)
+        {
+            Destroy(gameObject);
+            gameManager.UpdateScore(pointValue);
+            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
         Destroy(gameObject);
+        if(!gameObject.CompareTag("BAD"))
+        {
+            gameManager.GameOver();
+        }
     }
 }
